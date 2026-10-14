@@ -1,4 +1,4 @@
-name: "IaC Dual-Orchestration Dry-Run & Security Scan"
+name: "Lint, scan, validate and dry-run"
 
 on:
   push:
@@ -69,7 +69,7 @@ jobs:
           cat plan_summary.txt
 
       - name: Run Trivy Security Scan (IaC Misconfigurations)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: "config"
           scan-ref: "."
