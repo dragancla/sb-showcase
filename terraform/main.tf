@@ -16,17 +16,11 @@ terraform {
   }
 }
 
-# -------------------------------------------------------------
-# DYNAMIC DEVSECOPS SECRET (Shared across both orchestrators)
-# -------------------------------------------------------------
 resource "random_password" "db_password" {
   length  = 16
   special = false
 }
 
-# -------------------------------------------------------------
-# 1. KUBERNETES TARGET (HELM)
-# -------------------------------------------------------------
 provider "helm" {
   kubernetes {
     config_path = var.kubeconfig_path
@@ -51,9 +45,6 @@ resource "helm_release" "sb" {
   }
 }
 
-# -------------------------------------------------------------
-# 2. HASHICORP NOMAD TARGET
-# -------------------------------------------------------------
 provider "nomad" {
   address = var.nomad_address
 }

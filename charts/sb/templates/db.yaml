@@ -20,8 +20,18 @@ spec:
       labels:
         app: sb-db
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70   # PostgreSQL default UID in alpine
+        runAsGroup: 70  # PostgreSQL default GID in alpine
+        fsGroup: 70
       containers:
         - name: postgres
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true # <-- Fixes KSV-0014
+            capabilities:
+              drop: ["ALL"]              # <-- Fixes KSV-0118
           image: "{{ .Values.db.image }}"
           ports:
             - containerPort: {{ .Values.db.port }}
@@ -37,6 +47,20 @@ spec:
                   key: POSTGRES_PASSWORD
           resources:
             {{- toYaml .Values.db.resources | nindent 12 }}
+          volumeMounts:
+            - name: pg-data
+              mountPath: /var/lib/postgresql/data
+            - name: pg-run
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: pg-data
+          emptyDir: {}
+        - name: pg-run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
