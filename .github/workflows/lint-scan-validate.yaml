@@ -36,7 +36,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@main
         with:
-          terraform_version: "4.0.1"
+          terraform_version: "1.7.5"
           terraform_wrapper: false
 
       - name: Validate Nomad Job
