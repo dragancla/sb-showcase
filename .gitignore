@@ -1,0 +1,6 @@
+terraform/.terraform/
+*.tfstate*
+*tfplan*
+.helm/
+.DS_Store
+*.log

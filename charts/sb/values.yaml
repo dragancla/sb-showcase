@@ -1,0 +1,39 @@
+global:
+  imageTag: "1.0.0"
+
+securityDefaults:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+
+db:
+  image: "postgres:16-alpine"
+  port: 5432
+  name: "sb"
+  user: "sb_user"
+  # Default fallback for local testing; overridden in CI/Terraform
+  password: "dev_password_only"
+  resources:
+    limits: { cpu: 200m, memory: 256Mi }
+    requests: { cpu: 100m, memory: 128Mi }
+
+backend:
+  image: "ghcr.io/anton-dragan/sb-backend"
+  imagePullPolicy: IfNotPresent
+  replicaCount: 2
+  port: 8080
+  resources:
+    limits: { cpu: 200m, memory: 128Mi }
+    requests: { cpu: 50m, memory: 64Mi }
+
+frontend:
+  image: "ghcr.io/anton-dragan/sb-frontend"
+  imagePullPolicy: IfNotPresent
+  replicaCount: 1
+  port: 8080
+  resources:
+    limits: { cpu: 100m, memory: 128Mi }
+    requests: { cpu: 50m, memory: 64Mi }
