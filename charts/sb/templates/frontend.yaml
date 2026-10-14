@@ -14,11 +14,14 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 101
+        runAsUser: 101 # nginx unprivileged UID
+        runAsGroup: 101
+        fsGroup: 101
       containers:
         - name: web
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true # <-- Fixes KSV-0014
             capabilities:
               drop: ["ALL"]
           image: "{{ .Values.frontend.image }}:{{ .Values.global.imageTag }}"
@@ -27,6 +30,16 @@ spec:
             - containerPort: {{ .Values.frontend.port }}
           resources:
             {{- toYaml .Values.frontend.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: var-run
+              mountPath: /var/run
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

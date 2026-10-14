@@ -20,9 +20,6 @@ job "sb" {
   datacenters = [var.datacenter]
   type        = "service"
 
-  # =============================================================
-  # 1. DATABASE
-  # =============================================================
   group "db" {
     count          = 1
     shutdown_delay = "5s"
@@ -51,8 +48,8 @@ job "sb" {
       config {
         image        = "postgres:16-alpine"
         ports        = ["db"]
-        network_mode = "sb" # Joins shared Docker network
-        hostname     = "db" # Resolvable by backend API
+        network_mode = "sb"
+        hostname     = "db" 
       }
 
       env {
@@ -68,9 +65,6 @@ job "sb" {
     }
   }
 
-  # =============================================================
-  # 2. BACKEND API
-  # =============================================================
   group "backend" {
     count          = 2
     shutdown_delay = "5s"
@@ -100,8 +94,8 @@ job "sb" {
       config {
         image        = "ghcr.io/anton-dragan/sb-backend:${var.app_version}"
         ports        = ["http"]
-        network_mode = "sb"       # Joins shared Docker network
-        hostname     = "backend"  # Resolvable by frontend Nginx
+        network_mode = "sb" 
+        hostname     = "backend" 
       }
 
       env {
@@ -116,9 +110,6 @@ job "sb" {
     }
   }
 
-  # =============================================================
-  # 3. FRONTEND (Ingress)
-  # =============================================================
   group "frontend" {
     count          = 1
     shutdown_delay = "5s"
@@ -149,7 +140,7 @@ job "sb" {
       config {
         image        = "ghcr.io/anton-dragan/sb-frontend:${var.app_version}"
         ports        = ["http"]
-        network_mode = "sb" # Joins shared Docker network
+        network_mode = "sb" 
       }
 
       resources {

@@ -16,10 +16,12 @@ spec:
         runAsNonRoot: {{ .Values.securityDefaults.runAsNonRoot }}
         runAsUser: {{ .Values.securityDefaults.runAsUser }}
         runAsGroup: {{ .Values.securityDefaults.runAsGroup }}
+        fsGroup: {{ .Values.securityDefaults.runAsGroup }}
       containers:
         - name: api
           securityContext:
             allowPrivilegeEscalation: {{ .Values.securityDefaults.allowPrivilegeEscalation }}
+            readOnlyRootFilesystem: true # <-- Fixes KSV-0014
             capabilities:
               drop: {{ .Values.securityDefaults.capabilities.drop }}
           image: "{{ .Values.backend.image }}:{{ .Values.global.imageTag }}"
@@ -35,7 +37,7 @@ spec:
             httpGet:
               path: /healthz
               port: {{ .Values.backend.port }}
-            initialDelaySeconds: 5
+            initialDelaySeconds: 3
             periodSeconds: 10
           readinessProbe:
             httpGet:
@@ -45,6 +47,12 @@ spec:
             periodSeconds: 5
           resources:
             {{- toYaml .Values.backend.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

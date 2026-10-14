@@ -8,4 +8,6 @@ EXPOSE 8080
 
 HEALTHCHECK --interval=10s --timeout=3s --retries=3 CMD wget -qO- http://localhost:8080/ || exit 1
 
+USER 101
+
 CMD ["nginx", "-g", "daemon off;"]
