@@ -29,9 +29,9 @@ jobs:
           version: "2.0.7"
 
       - name: Setup Helm
-        uses: azure/setup-helm@main
+        uses: azure/setup-helm@v4
         with:
-          version: "v5.0.1"
+          version: "v3.14.0"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@main
